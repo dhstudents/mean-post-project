@@ -15,7 +15,6 @@ export class PostsService {
   constructor(private http: HttpClient, private router: Router) {
   }
 
-
   getPosts(postPerPage: number, currentPage: number) {
     const queryParams = `?pagesize=${postPerPage}&page=${currentPage}`
     this.http.get<{ message: string, posts: any, count: number }>('http://localhost:3000/api/posts' + queryParams)
@@ -27,7 +26,8 @@ export class PostsService {
                 id: post._id,
                 title: post.title,
                 content: post.content,
-                imagePath: post.imagePath
+                imagePath: post.imagePath,
+                creator: post.creator
               }
             }), count : responseData.count
           }
@@ -44,7 +44,7 @@ export class PostsService {
 
   getPost(id: string) {
     //  return { ...this.posts.find(post => post.id === id) }
-    return this.http.get<{ _id: string, title: string, content: string, imagePath: string }>(`http://localhost:3000/api/posts/${id}`)
+    return this.http.get<{ _id: string, title: string, content: string, imagePath: string , creator: string }>(`http://localhost:3000/api/posts/${id}`)
   }
 
   addPost(title: string, content: string, image: File) {
@@ -71,7 +71,7 @@ export class PostsService {
       postData.append('content', content)
       postData.append('image', image, title)
     } else {
-      postData = { id, title, content, imagePath: image }
+      postData = { id, title, content, imagePath: image , creator: null }
     }
     this.http.put(`http://localhost:3000/api/posts/${id}`, postData)
       .subscribe((response) => {

@@ -22,6 +22,7 @@ export class PostListComponent implements OnInit, OnDestroy {
   posts: Post[] = [];
   postsSub: Subscription;;
   isLoading: boolean = false;
+  userId: string;
 
   // paginator
   totalPosts: number = 0;
@@ -38,16 +39,18 @@ export class PostListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.isLoading = true;
     this.postsService.getPosts(this.postPerPage, this.currentPage);
+    this.userId = this.authService.getUserId();
     this.postsSub = this.postsService.getPostUpdatelistener()
-      .subscribe((postsData: { posts: Post[], count: number }) => {
-        this.isLoading = false;
-        this.totalPosts = postsData.count
-        this.posts = postsData.posts;
-      })     // next , error , complete
+    .subscribe((postsData: { posts: Post[], count: number }) => {
+      this.isLoading = false;
+      this.totalPosts = postsData.count
+      this.posts = postsData.posts;
+    })     // next , error , complete
     this.userIsAutenticated = this.authService.getIsAuth();
     this.authStatusSubs = this.authService.getAuthStatusListener()
-      .subscribe(isAuthenticated => {
-        this.userIsAutenticated = isAuthenticated;
+    .subscribe(isAuthenticated => {
+      this.userIsAutenticated = isAuthenticated;
+      this.userId = this.authService.getUserId();
       });
   }
 
